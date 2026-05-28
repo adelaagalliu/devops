@@ -4,6 +4,9 @@ on:
   push:
     branches: [ "main" ]
 
+permissions:
+  contents: write
+
 jobs:
   build:
     runs-on: self-hosted
@@ -12,6 +15,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Generate version
+        id: version
+        run: echo "VERSION=v1.${{ github.run_number }}" >> $GITHUB_ENV
+
       - name: Build Docker image
-        run: docker build .
-        
+        run: docker build -t devops:${{ env.VERSION }} .
+
+      - name: Create Git tag
+        run: |
+          git tag ${{ env.VERSION }}
+          git push origin ${{ env.VERSION }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.VERSION }}
+          name: Release ${{ env.VERSION }}
