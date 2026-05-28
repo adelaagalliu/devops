@@ -18,7 +18,7 @@ jobs:
       - name: Generate version
         shell: powershell
         run: |
-         "VERSION=v1.${{ github.run_number }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+         "VERSION=1.${{ github.run_number }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Build Docker image
         run: docker build -t devops:${{ env.VERSION }} .
